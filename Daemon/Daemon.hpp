@@ -18,7 +18,7 @@ private:
     Daemon(const Daemon&) = delete;
     Daemon& operator=(Daemon&) = delete;
     
-    const std::string _pid_path = "/home/sss/Desktop/Daemon/Deamon.pid";
+    const std::string _pid_path = "/var/run/Daemon.pid";
     static std::string _config_path;
     static inline std::vector<std::pair<std::filesystem::path, uintmax_t>> _proccesed_folders = {};
     
