@@ -30,8 +30,6 @@ void Daemon::start(){
     _close_existing_process();
     _fork();
     while(true){
-        signal(SIGHUP,_sighup_handler);
-        signal(SIGTERM,_sigterm_handler);
         _folders_chek();
         std::this_thread::sleep_for(std::chrono::seconds(30));
     }
@@ -43,6 +41,8 @@ void Daemon::_fork(){
         exit(EXIT_FAILURE);
     if (setsid() == -1)
         exit(EXIT_FAILURE);
+    signal(SIGHUP,_sighup_handler);
+    signal(SIGTERM,_sigterm_handler);
     umask(0);
     openlog("Daemon", LOG_PID, LOG_DAEMON);
     syslog(LOG_INFO, "Daemon started");
