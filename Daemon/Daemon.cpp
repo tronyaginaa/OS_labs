@@ -71,7 +71,7 @@ void Daemon::_close_existing_process(){
         std::string path = "/proc/" + std::to_string(pid);
         std::ifstream dir(path);
         if (dir) {
-            kill(pid, 0);
+            kill(pid, SIGTERM);
             syslog(LOG_INFO, "Killing another instance");
         }
     } else
