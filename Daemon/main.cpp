@@ -10,6 +10,6 @@
 
 int main() {
     Daemon& daemon = Daemon::getInstance();
-    daemon._start();
+    daemon.start();
     return 0;
 }

@@ -26,7 +26,7 @@ Daemon& Daemon::getInstance(){
     return instance;
 }
 
-void Daemon::_start(){
+void Daemon::start(){
     _close_existing_process();
     _fork();
     while(true){
@@ -52,7 +52,6 @@ void Daemon::_fork(){
         pid_file << getpid();
     }else
         syslog(LOG_INFO, ".pid connot be overwritten");
-    return;
 }
 
 void Daemon::_sighup_handler(int signal){
@@ -77,14 +76,12 @@ void Daemon::_close_existing_process(){
         }
     } else
         syslog(LOG_INFO, ".pid file cannot be read");
-    return;
 }
 
 
 void Daemon::_folders_chek(){
     for(auto& folder : _proccesed_folders)
         _delete_files(folder);
-    return;
 }
 
 
@@ -103,7 +100,6 @@ void Daemon::_delete_files(std::pair<std::filesystem::path, uintmax_t> folder){
             std::filesystem::remove(file.path());
         syslog(LOG_INFO, "Files have been deleted");
     }
-    return;
 }
 
 
@@ -118,5 +114,4 @@ void Daemon::_read_config_file(){
         syslog(LOG_INFO, "Config file read");
     }else
         syslog(LOG_INFO, "Сonfig file cannot be read");
-    return;
 }

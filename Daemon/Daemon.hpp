@@ -12,7 +12,7 @@
 class Daemon {
 public:
     static Daemon& getInstance();
-    void _start();
+    void start();
 private:
     Daemon();
     Daemon(const Daemon&) = delete;
