@@ -17,7 +17,7 @@
  std::string Daemon::_config_path;
 
 Daemon::Daemon(){
-    _config_path = "/home/sss/Desktop/Daemon/Config.conf";
+    _config_path = std::filesystem::absolute("Config.conf");
     _read_config_file();
 }
 
