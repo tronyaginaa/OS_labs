@@ -50,8 +50,10 @@ void Daemon::_fork(){
     if (pid_file.is_open()){
         syslog(LOG_INFO, ".pid overwritten");
         pid_file << getpid();
-    }else
-        syslog(LOG_INFO, ".pid connot be overwritten");
+    }else {
+        syslog(LOG_INFO, ".pid connot be overwritten. The started Daemon was deleted.");
+        exit(EXIT_FAILURE);
+    }
 }
 
 void Daemon::_sighup_handler(int signal){
@@ -75,7 +77,7 @@ void Daemon::_close_existing_process(){
             syslog(LOG_INFO, "Killing another instance");
         }
     } else {
-        syslog(LOG_INFO, ".pid file cannot be read");
+        syslog(LOG_INFO, ".pid file cannot be read. Daemon start stopped.");
         exit(EXIT_FAILURE);
     }
 }
