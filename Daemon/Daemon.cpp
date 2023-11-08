@@ -85,7 +85,8 @@ void Daemon::_close_existing_process(){
 
 void Daemon::_folders_chek(){
     for(auto& folder : _proccesed_folders)
-        _delete_files(folder);
+        if (std::filesystem::exists(folder.first)) 
+            _delete_files(folder);
 }
 
 
