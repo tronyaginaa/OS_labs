@@ -74,8 +74,10 @@ void Daemon::_close_existing_process(){
             kill(pid, SIGTERM);
             syslog(LOG_INFO, "Killing another instance");
         }
-    } else
+    } else {
         syslog(LOG_INFO, ".pid file cannot be read");
+        exit(EXIT_FAILURE);
+    }
 }
 
 
