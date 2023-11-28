@@ -100,7 +100,7 @@ int Client::start() {
             clientMsg = future.get();
             future = std::async(_get_output_message);
         }
-        Connection* conn = Connection::createConnection(pid, false);
+        Connection* conn = Connection::createConnection(pid, false,sizeof(Message));
         if (sem_post(client_sem) == -1) {
             syslog(LOG_ERR, "Client semaphore error");
             return _end();

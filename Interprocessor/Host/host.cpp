@@ -68,7 +68,7 @@ void Host::_signal_handler(int signum, siginfo_t *info, void *ptr){
             }
             syslog(LOG_INFO, "Client pid %i connected", pid);
             host._clients.insert({pid ,0});
-            host.connections.push_back(Connection::createConnection(pid, true));
+            host.connections.push_back(Connection::createConnection(pid, true, sizeof(Message)));
             kill(pid, SIGUSR1);
             break;
         }
@@ -115,7 +115,7 @@ void* Host::_run(void*  argv){
         syslog(LOG_ERR, "Client semaphore error");
         return nullptr;
     }
-    Connection* conn = Connection::createConnection(pid, false);
+    Connection* conn = Connection::createConnection(pid, false, sizeof(Message));
     
     {
         timespec t;

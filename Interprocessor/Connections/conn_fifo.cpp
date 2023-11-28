@@ -24,7 +24,7 @@ namespace
 }
 
 
-Connection* Connection::createConnection(size_t id, bool isHost){
+Connection* Connection::createConnection(size_t id, bool isHost, size_t msg_size){
     return new ConnectionFifo(id, isHost);
 }
 
@@ -52,16 +52,11 @@ ConnectionFifo::~ConnectionFifo(){
 
 
 void ConnectionFifo::Get(void* buf, size_t count){
-    int lenght = read(_desc, buf, count);
-    if (lenght == -1) {
-        syslog(LOG_ERR, "Get error");
-    }
+    read(_desc, buf, count);
+
 }
 
 
 void ConnectionFifo::Send(void* buf, size_t count){
-    int length = write(_desc, buf, count);
-    if (length == -1) {
-        syslog(LOG_ERR, "Send error");
-    }
+    write(_desc, buf, count);
 }
