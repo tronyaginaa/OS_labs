@@ -22,6 +22,19 @@ int main(int argc, char* argv[]){
     return client.start();
 }
 
+bool inputAvailable(){
+  struct timeval tv;
+  fd_set fds;
+  tv.tv_sec = 1;
+  tv.tv_usec = 0;
+  FD_ZERO(&fds);
+  FD_SET(STDIN_FILENO, &fds);
+  int ret = select(STDIN_FILENO+1, &fds, NULL, NULL, &tv);
+  if(ret == 0 || ret == -1)
+    return false;
+  return (FD_ISSET(0, &fds));
+}
+
 
 Client::Client(void){
     struct sigaction sig{};
@@ -63,14 +76,6 @@ void Client::_signal_handler(int signum, siginfo_t* info, void* ptr){
 }
 
 
-Message Client::_get_output_message(){
-    Message msg;
-    std::cin.getline(msg.m_message, 300);
-    msg.is_init = true;
-    return msg;
-}
-
-
 int Client::start() {
     _is_running = true;
     while(!_is_connected) {
@@ -92,13 +97,12 @@ int Client::start() {
         syslog(LOG_ERR, "Client semaphore error");
         return _end();
     }
-    std::future<Message> future = std::async(_get_output_message);
     while (_is_running){
         Message clientMsg;
-        std::chrono::seconds timeout(1);
-        if (future.wait_for(timeout) == std::future_status::ready){
-            clientMsg = future.get();
-            future = std::async(_get_output_message);
+         if(inputAvailable()){
+            std::cout<<"got it"<<std::endl;
+            std::cin.getline(clientMsg.m_message, STRING_MAX_SIZE);
+            clientMsg.is_init = true;
         }
         Connection* conn = Connection::createConnection(pid, false,sizeof(Message));
         if (sem_post(client_sem) == -1) {

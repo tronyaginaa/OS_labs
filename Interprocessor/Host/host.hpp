@@ -3,6 +3,8 @@
 #include <map>
 #include <vector>
 #include <signal.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <future>
 #include <bits/types/siginfo_t.h>
 
@@ -18,7 +20,6 @@ private:
     std::vector<Connection*> connections;
     Host();
     ~Host();
-    static Message _get_output_message();
     static void _signal_handler(int signum, siginfo_t* info, void *ptr);
     static void* _run(void*  argv);
     void _end();

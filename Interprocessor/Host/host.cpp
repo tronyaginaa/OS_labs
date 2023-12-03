@@ -9,11 +9,27 @@
 #include <string>
 #include <thread>
 #include <string>
+#include <stdio.h>
+#include <sys/select.h>
 
 int main(int argc, char* argv[]){
     auto& host = Host::getInstance();
     std::cout << getpid()<<std::endl;
     return host.start();
+}
+
+
+bool inputAvailable(){
+  struct timeval tv;
+  fd_set fds;
+  tv.tv_sec = 1;
+  tv.tv_usec = 0;
+  FD_ZERO(&fds);
+  FD_SET(STDIN_FILENO, &fds);
+  int ret = select(STDIN_FILENO+1, &fds, NULL, NULL, &tv);
+  if(ret == 0 || ret == -1)
+    return false;
+  return (FD_ISSET(0, &fds));
 }
 
 
@@ -89,13 +105,6 @@ void Host::_signal_handler(int signum, siginfo_t *info, void *ptr){
 }
 
 
-Message Host::_get_output_message(){
-    Message msg;
-    std::cin.getline(msg.m_message, STRING_MAX_SIZE);
-    msg.is_init = true;
-    return msg;
-}
-
 
 void Host::_end(){
     _is_running = false;
@@ -164,14 +173,12 @@ void* Host::_run(void*  argv){
 
 int Host::start(){
     _is_running = true;
-    std::future<Message> future =  std::async(_get_output_message);
     while(_is_running) {
         
         Message msg;
-        std::chrono::seconds timeout(1);
-        if (future.wait_for(timeout) == std::future_status::ready){
-        msg = future.get();
-        future = std::async(_get_output_message);
+        if(inputAvailable()){
+            std::cin.getline(msg.m_message, STRING_MAX_SIZE);
+            msg.is_init = true;
         }
         _output = msg;
         

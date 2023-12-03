@@ -1,6 +1,8 @@
 #include "../queue.hpp"
 #include "../Connections/connection.hpp"
 #include <signal.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <bits/types/siginfo_t.h>
 
 class Client{
@@ -13,7 +15,6 @@ private:
     static Client _instance;
     Client();
     ~Client();
-    static Message _get_output_message();
     struct timespec _send_request_to_connect_time;
     static void _signal_handler(int signum, siginfo_t* info, void* ptr);
     int _end();
