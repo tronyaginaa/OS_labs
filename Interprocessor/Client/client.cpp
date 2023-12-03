@@ -100,7 +100,6 @@ int Client::start() {
     while (_is_running){
         Message clientMsg;
          if(inputAvailable()){
-            std::cout<<"got it"<<std::endl;
             std::cin.getline(clientMsg.m_message, STRING_MAX_SIZE);
             clientMsg.is_init = true;
         }
