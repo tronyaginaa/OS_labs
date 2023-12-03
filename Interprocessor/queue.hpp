@@ -19,30 +19,36 @@ template <typename T>
 class queue {
 private:
     std::map<pid_t, std::queue<T>> _storage;
-    mutable std::mutex _mutex;
+    mutable pthread_mutex_t _mutex;
 public:
+    queue(){
+        pthread_mutex_init(&_mutex, NULL);
+    }
+    ~queue(){
+        pthread_mutex_destroy(&_mutex);
+    }
     void push(pid_t pid, const T &val){
-        _mutex.lock();
+        pthread_mutex_lock(&_mutex);
         _storage[pid].push(val);
-        _mutex.unlock();
+        pthread_mutex_unlock(&_mutex);
     }
     
     
     bool get_and_remove(pid_t pid,T *msg){
-        _mutex.lock();
+        pthread_mutex_lock(&_mutex);
         if (_storage[pid].empty()){
-            _mutex.unlock();
+            pthread_mutex_unlock(&_mutex);
             return false;
         }
         *msg = _storage[pid].front();
         _storage[pid].pop();
-        _mutex.unlock();
+        pthread_mutex_unlock(&_mutex);
         return true;
     }
     
     
     bool get_from_connection(pid_t pid,Connection *conn){
-        _mutex.lock();
+        pthread_mutex_lock(&_mutex);
         uint32_t amount = 0;
         conn->Get(&amount, sizeof(uint32_t));
         for (uint32_t i = 0; i < amount; i++){
@@ -50,13 +56,13 @@ public:
             conn->Get(&msg, sizeof(T));
             _storage[pid].push(msg);
         }
-        _mutex.unlock();
+        pthread_mutex_unlock(&_mutex);
         return true;
     }
     
     
     bool send_to_connection(pid_t pid, Connection *conn){
-        _mutex.lock();
+        pthread_mutex_lock(&_mutex);
         uint32_t amount = _storage[pid].size();
         if (amount > 0)
         conn->Send(&amount, sizeof(uint32_t));
@@ -64,13 +70,11 @@ public:
             conn->Send(&_storage[pid].front(), sizeof(T));
             _storage[pid].pop();
         }
-        _mutex.unlock();
+        pthread_mutex_unlock(&_mutex);
         return true;
     }
     
     
-    bool isEmpty(pid_t pid){
-        return _storage[pid].empty();
-    }
+   
 };
 
