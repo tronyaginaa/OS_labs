@@ -101,7 +101,7 @@ void run_write_test(SetType set_type, int writers_num, int records_num, int test
         join_threads(threads);
         std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
         result &= check_writers(*set, data);
-        timeTotal += duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0;
+        timeTotal += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0;
         delete set;
     }
     std::cout << "Writers test\n result: " <<(result ? "SUCCESS " : "FAIL ") << " time: " << timeTotal / tests_num << std::endl;
@@ -122,7 +122,7 @@ void run_read_test(SetType set_type,  int readers_num, int readings_num, int tes
         join_threads(threads);
         std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
         result &= check_readers(*set, array);
-        timeTotal += duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0;
+        timeTotal += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0;
         delete set;
     }
     std::cout << "Readers test\n result: " <<(result ? "SUCCESS " : "FAIL ") << " time: " << timeTotal / tests_num << std::endl;
@@ -144,7 +144,7 @@ void run_general_test(SetType set_type, int writers_num, int readers_num, int re
         join_threads(readers);
         std::chrono::time_point<std::chrono::system_clock> end = std::chrono::system_clock::now();
         result &= check_readers(*set, array);
-        timeTotal += duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0;
+        timeTotal += std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() / 1000.0;
         delete set;
     }
     std::cout << "General test\n result: " <<(result ? "SUCCESS " : "FAIL ") << " time: " << timeTotal / tests_num << std::endl;
